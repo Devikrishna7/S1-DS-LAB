@@ -4,6 +4,7 @@ struct node
 {
     int data;
     struct node *next;
+    struct node *prev;
 } *head = NULL, *new, *current, *temp, *dele;
 void create()
 {
@@ -16,6 +17,7 @@ void create()
         new = (struct node *)malloc(sizeof(struct node));
         scanf("%d", &new->data);
         new->next = NULL;
+        new->prev=NULL;
 
         if (head == NULL)
         {
@@ -25,6 +27,7 @@ void create()
         else
         {
             current->next = new;
+            new->prev=current;
             current = new;
         }
     }
@@ -62,9 +65,11 @@ void insert()
     new = (struct node *)malloc(sizeof(struct node *));
     scanf("%d", &new->data);
     new->next = NULL;
+    new->prev=NULL;
     if (c == 1)
     {
         new->next = head;
+        head->prev=new;
         head = new;
         Display();
     }
@@ -82,21 +87,25 @@ void insert()
                 current = current->next;
             }
             current->next = new;
+            new->prev=current;
         }
         Display();
     }
     else if (c == 3)
     {
-        if(head==NULL){
-            head=new;
+        if (head == NULL)
+        {
+            head = new;
             Display();
             return;
         }
         int pos;
         printf("Enter the position in which new node to be inserted: ");
         scanf("%d", &pos);
-        if (pos == 1){
+        if (pos == 1)
+        {
             new->next = head;
+            head->prev=new;
             head = new;
             Display();
             return;
@@ -107,6 +116,8 @@ void insert()
             temp = temp->next;
         }
         new->next = temp->next;
+        temp->next->prev=new;
+        new->prev=temp;
         temp->next = new;
         Display();
     }
@@ -116,12 +127,12 @@ void delete()
 {
     int c;
     if (head == NULL)
-    { // no nodes
+    {                                           // no nodes
         printf("/there is nothing to delete");
         return;
     }
     else if (head->next == NULL)
-    { // when only one node is available
+    {                                   // when only one node is available
         temp = head;
         head = NULL;
         free(temp);
@@ -134,6 +145,7 @@ void delete()
         temp = head;
         head = head->next;
         temp->next = NULL;
+        head->prev=NULL;
         free(temp);
         Display();
     }
@@ -146,6 +158,7 @@ void delete()
         }
         temp = current->next;
         current->next = NULL;
+        temp->prev=NULL;
         free(temp);
     }
     else if (c == 3)
@@ -161,6 +174,7 @@ void delete()
         }
         dele = temp->next;
         temp->next = temp->next->next;
+        dele->next->prev=temp;
         free(dele);
         Display();
     }
